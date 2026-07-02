@@ -1,0 +1,95 @@
+```html
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1 class="text-4xl font-bold mb-6">Editar Hábito ✏️</h1>
+
+<form method="POST" class="bg-slate-800 p-6 rounded-2xl mb-8">
+    {% csrf_token %}
+
+    <input
+        type="text"
+        name="nombre"
+        value="{{ habito.nombre }}"
+        class="w-full p-3 rounded text-black mb-4"
+        required
+    >
+
+    <!-- Categorías -->
+    <select
+        id="categoria_select"
+        name="categoria_select"
+        class="w-full p-3 rounded text-black mb-4"
+        onchange="toggleCustomCategory()"
+        required
+    >
+        <option value="Salud" {% if habito.categoria == 'Salud' %}selected{% endif %}>💧 Salud</option>
+        <option value="Fitness" {% if habito.categoria == 'Fitness' %}selected{% endif %}>🏋 Fitness</option>
+        <option value="Estudio" {% if habito.categoria == 'Estudio' %}selected{% endif %}>📚 Estudio</option>
+        <option value="Productividad" {% if habito.categoria == 'Productividad' %}selected{% endif %}>💼 Productividad</option>
+        <option value="Finanzas" {% if habito.categoria == 'Finanzas' %}selected{% endif %}>💰 Finanzas</option>
+        <option value="Mindfulness" {% if habito.categoria == 'Mindfulness' %}selected{% endif %}>🧘 Mindfulness</option>
+        <option value="Lectura" {% if habito.categoria == 'Lectura' %}selected{% endif %}>📖 Lectura</option>
+        <option value="custom">✍ Personalizada</option>
+    </select>
+
+    <input
+        id="custom_category"
+        type="text"
+        name="custom_category"
+        placeholder="Escribe tu categoría"
+        class="w-full p-3 rounded text-black mb-4 hidden"
+    >
+
+    <!-- Frecuencia -->
+    <select
+        name="frecuencia"
+        class="w-full p-3 rounded text-black mb-4"
+    >
+        <option value="diario" {% if habito.frecuencia == 'diario' %}selected{% endif %}>Diario</option>
+        <option value="semanal" {% if habito.frecuencia == 'semanal' %}selected{% endif %}>Semanal</option>
+        <option value="mensual" {% if habito.frecuencia == 'mensual' %}selected{% endif %}>Mensual</option>
+    </select>
+
+    <p class="mb-2 font-bold text-white">Días:</p>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6 text-white">
+        <label><input type="checkbox" name="dias" value="Lunes" {% if 'Lunes' in habito.dias %}checked{% endif %}> Lunes</label>
+        <label><input type="checkbox" name="dias" value="Martes" {% if 'Martes' in habito.dias %}checked{% endif %}> Martes</label>
+        <label><input type="checkbox" name="dias" value="Miércoles" {% if 'Miércoles' in habito.dias %}checked{% endif %}> Miércoles</label>
+        <label><input type="checkbox" name="dias" value="Jueves" {% if 'Jueves' in habito.dias %}checked{% endif %}> Jueves</label>
+        <label><input type="checkbox" name="dias" value="Viernes" {% if 'Viernes' in habito.dias %}checked{% endif %}> Viernes</label>
+        <label><input type="checkbox" name="dias" value="Sábado" {% if 'Sábado' in habito.dias %}checked{% endif %}> Sábado</label>
+        <label><input type="checkbox" name="dias" value="Domingo" {% if 'Domingo' in habito.dias %}checked{% endif %}> Domingo</label>
+    </div>
+
+    <div class="flex gap-4">
+        <button class="bg-green-500 px-6 py-3 rounded font-bold">
+            Guardar cambios
+        </button>
+
+        <a href="{% url 'habitos' %}"
+           class="bg-gray-500 px-6 py-3 rounded font-bold">
+            Cancelar
+        </a>
+    </div>
+</form>
+
+<script>
+function toggleCustomCategory() {
+    const select = document.getElementById('categoria_select');
+    const input = document.getElementById('custom_category');
+
+    if (select.value === 'custom') {
+        input.classList.remove('hidden');
+        input.setAttribute('required', 'true');
+    } else {
+        input.classList.add('hidden');
+        input.removeAttribute('required');
+    }
+}
+</script>
+
+{% endblock %}
+```

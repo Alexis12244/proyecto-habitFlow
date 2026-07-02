@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h1 class="text-4xl font-bold mb-6">Mis Hábitos</h1>
+
+<form method="POST" class="bg-slate-800 p-6 rounded-2xl mb-8">
+    {% csrf_token %}
+
+    <input
+        type="text"
+        name="nombre"
+        placeholder="Nombre del hábito"
+        class="w-full p-3 rounded text-black mb-4"
+        required
+    >
+
+    <!-- Categorías -->
+    <select
+        id="categoria_select"
+        name="categoria_select"
+        class="w-full p-3 rounded text-black mb-4"
+        onchange="toggleCustomCategory()"
+        required
+    >
+        <option value="" disabled selected>Selecciona una categoría</option>
+        <option value="Salud">💧 Salud</option>
+        <option value="Fitness">🏋 Fitness</option>
+        <option value="Estudio">📚 Estudio</option>
+        <option value="Productividad">💼 Productividad</option>
+        <option value="Finanzas">💰 Finanzas</option>
+        <option value="Mindfulness">🧘 Mindfulness</option>
+        <option value="Lectura">📖 Lectura</option>
+        <option value="custom">✍ Personalizada</option>
+    </select>
+
+    <input
+        id="custom_category"
+        type="text"
+        name="custom_category"
+        placeholder="Escribe tu categoría"
+        class="w-full p-3 rounded text-black mb-4 hidden"
+        disabled
+    >
+
+    <!-- Frecuencia -->
+    <select
+        name="frecuencia"
+        class="w-full p-3 rounded text-black mb-4"
+    >
+        <option value="diario">Diario</option>
+        <option value="semanal">Semanal</option>
+        <option value="mensual">Mensual</option>
+    </select>
+
+    <!-- DÍAS -->
+    <p class="mb-2 font-bold">Días:</p>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+        <label><input type="checkbox" name="dias" value="Lunes"> Lunes</label>
+        <label><input type="checkbox" name="dias" value="Martes"> Martes</label>
+        <label><input type="checkbox" name="dias" value="Miércoles"> Miércoles</label>
+        <label><input type="checkbox" name="dias" value="Jueves"> Jueves</label>
+        <label><input type="checkbox" name="dias" value="Viernes"> Viernes</label>
+        <label><input type="checkbox" name="dias" value="Sábado"> Sábado</label>
+        <label><input type="checkbox" name="dias" value="Domingo"> Domingo</label>
+    </div>
+
+    <button class="bg-blue-500 px-4 py-3 rounded">
+        Crear hábito
+    </button>
+</form>
+
+<div class="space-y-4">
+    {% for habito in habitos %}
+        <div class="bg-slate-800 p-5 rounded-2xl">
+            <h2 class="text-2xl font-bold">
+                {{ habito.nombre }}
+            </h2>
+
+            <p>Categoría: {{ habito.categoria }}</p>
+            <p>Frecuencia: {{ habito.frecuencia }}</p>
+            <p>Días: {{ habito.dias }}</p>
+            <p>XP: {{ habito.xp }}</p>
+
+            <div class="flex gap-3 mt-4">
+                <a href="{% url 'editar_habito' habito.id %}"
+                class="bg-yellow-500 px-4 py-2 rounded">
+                    Editar
+                </a>
+
+                <a href="{% url 'eliminar_habito' habito.id %}"
+                class="bg-red-500 px-4 py-2 rounded">
+                    Eliminar
+                </a>
+            </div>
+        </div>
+    {% empty %}
+        <p>No tienes hábitos todavía.</p>
+    {% endfor %}
+</div>
+
+<script>
+function toggleCustomCategory() {
+    const select = document.getElementById('categoria_select');
+    const input = document.getElementById('custom_category');
+
+    if (select.value === 'custom') {
+        input.classList.remove('hidden');
+        input.removeAttribute('disabled');
+        input.setAttribute('required', 'true');
+        input.focus();
+    } else {
+        input.classList.add('hidden');
+        input.setAttribute('disabled', 'true');
+        input.removeAttribute('required');
+    }
+}
+</script>
+
+{% endblock %}

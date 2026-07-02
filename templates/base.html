@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{% block title %}HabitFlow{% endblock %}</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+body{
+    background:linear-gradient(135deg,#0f172a,#1e293b,#334155);
+}
+.card{
+    transition:.3s;
+}
+.card:hover{
+    transform:translateY(-8px) scale(1.02);
+    box-shadow:0 20px 35px rgba(0,0,0,.25);
+}
+.active{
+    background:linear-gradient(90deg,#3b82f6,#8b5cf6);
+}
+</style>
+</head>
+
+<body class="text-white">
+<div class="flex min-h-screen">
+
+    <!-- SIDEBAR -->
+    <aside class="w-72 bg-slate-900/80 backdrop-blur-xl border-r border-slate-700 p-6">
+
+        <h1 class="text-4xl font-black mb-8 bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">
+            🔥 HabitFlow
+        </h1>
+
+        <div class="space-y-3">
+            <a href="{% url 'inicio' %}" class="block p-4 rounded-2xl hover:bg-slate-700">🏠 Inicio</a>
+            <a href="{% url 'habitos' %}" class="block p-4 rounded-2xl hover:bg-slate-700">📅 Hábitos</a>
+            <a href="#" class="block p-4 rounded-2xl hover:bg-slate-700">🎯 Metas</a>
+            <a href="#" class="block p-4 rounded-2xl hover:bg-slate-700">🏆 Logros</a>
+            <a href="#" class="block p-4 rounded-2xl hover:bg-slate-700">📈 Estadísticas</a>
+        </div>
+
+        <div class="mt-10 bg-gradient-to-br from-cyan-500 to-blue-700 rounded-3xl p-5">
+            <p class="text-sm opacity-80">Nivel Actual</p>
+            <h2 class="text-5xl font-black">12</h2>
+
+            <div class="mt-4 h-3 bg-white/20 rounded-full">
+                <div class="h-3 w-3/4 bg-white rounded-full"></div>
+            </div>
+
+            <p class="mt-2 text-sm">750 / 1000 XP</p>
+        </div>
+
+        <a href="{% url 'logout' %}"
+           class="block mt-8 bg-red-500 hover:bg-red-600 text-center p-3 rounded-xl font-bold">
+            Cerrar sesión
+        </a>
+
+    </aside>
+
+    <!-- CONTENIDO -->
+    <main class="flex-1 p-8">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+</div>
+</body>
+</html>
+
