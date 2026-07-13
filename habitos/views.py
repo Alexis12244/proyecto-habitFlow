@@ -45,6 +45,7 @@ def habitos(request):
         {'habitos': habitos_usuario}
     )
 
+
 @login_required
 def eliminar_habito(request, id):
     habito = get_object_or_404(
@@ -58,6 +59,7 @@ def eliminar_habito(request, id):
 
     return redirect('habitos')
 
+
 @login_required
 def editar_habito(request, id):
     habito = get_object_or_404(
@@ -65,6 +67,16 @@ def editar_habito(request, id):
         id=id,
         usuario=request.user
     )
+
+    categorias_predefinidas = [
+        'Salud',
+        'Fitness',
+        'Estudio',
+        'Productividad',
+        'Finanzas',
+        'Mindfulness',
+        'Lectura'
+    ]
 
     if request.method == 'POST':
         habito.nombre = request.POST.get('nombre')
@@ -84,9 +96,13 @@ def editar_habito(request, id):
         habito.save()
         return redirect('habitos')
 
+    es_personalizada = habito.categoria not in categorias_predefinidas
+
     return render(
         request,
         'habitos/editar.html',
-        {'habito': habito}
+        {
+            'habito': habito,
+            'es_personalizada': es_personalizada
+        }
     )
-
