@@ -6,6 +6,7 @@ from habitos.views import habitos
 from inicio.views import inicio
 from usuarios import views
 from habitos.views import habitos, editar_habito, eliminar_habito
+from metas.views import metas
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -15,4 +16,5 @@ urlpatterns = [
     path('habitos/', habitos, name='habitos'),
     path('habitos/editar/<int:id>/', editar_habito, name='editar_habito'),
     path('habitos/eliminar/<int:id>/', eliminar_habito, name='eliminar_habito'),
+    path('metas/', metas, name='metas'),
 ]

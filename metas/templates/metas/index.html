@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="mb-8">
+    <h1 class="text-5xl font-black">
+        🎯 Mis Metas
+    </h1>
+
+    <p class="text-slate-400 mt-2">
+        Organiza tus objetivos y mide tu progreso.
+    </p>
+</div>
+
+{% include 'metas/components/estadisticas.html' %}
+
+<div class="grid lg:grid-cols-3 gap-8 mt-8">
+
+    <div class="lg:col-span-2 space-y-6">
+
+        <h2 class="text-3xl font-bold mb-4">
+            Todas mis metas
+        </h2>
+
+        {% for meta in metas %}
+
+            {% include 'metas/components/card_meta.html' %}
+
+        {% empty %}
+
+            <div class="bg-slate-800 rounded-3xl p-12 text-center">
+
+                <div class="text-7xl mb-4">
+                    🎯
+                </div>
+
+                <h2 class="text-3xl font-bold">
+                    Aún no tienes metas
+                </h2>
+
+                <p class="text-slate-400 mt-3">
+                    Crea tu primera meta y empieza a cumplir tus objetivos.
+                </p>
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+    <div>
+
+        {% include 'metas/components/formulario_meta.html' %}
+
+    </div>
+
+</div>
+
+{% endblock %}

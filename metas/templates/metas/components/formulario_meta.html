@@ -1,0 +1,115 @@
+<div class="bg-slate-800 rounded-3xl p-6 sticky top-6 shadow-lg">
+
+    <h2 class="text-3xl font-bold mb-6">
+        Nueva Meta
+    </h2>
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        <input
+            type="text"
+            name="nombre"
+            placeholder="Nombre de la meta"
+            class="w-full p-3 rounded-xl text-black mb-4"
+        >
+
+        <textarea
+            name="descripcion"
+            rows="4"
+            placeholder="Descripción"
+            class="w-full p-3 rounded-xl text-black mb-4"
+        ></textarea>
+
+        <label class="block mb-2">
+            Fecha de inicio
+        </label>
+
+        <input
+            type="date"
+            name="fecha_inicio"
+            class="w-full p-3 rounded-xl text-black mb-5"
+        >
+
+        <label class="block mb-2 font-semibold">
+            Submetas
+        </label>
+
+        <div id="submetas-container">
+
+            <div class="flex gap-2 mb-3">
+
+                <input
+                    type="text"
+                    name="submetas"
+                    placeholder="Escribe una submeta"
+                    class="flex-1 p-3 rounded-xl text-black"
+                >
+
+                <button
+                    type="button"
+                    onclick="agregarSubmeta()"
+                    class="bg-blue-600 px-4 rounded-xl"
+                >
+                    +
+                </button>
+
+            </div>
+
+        </div>
+
+        <button
+            type="button"
+            onclick="agregarSubmeta()"
+            class="text-cyan-400 hover:text-cyan-300 mb-6"
+        >
+            + Agregar otra submeta
+        </button>
+
+        <button
+            class="w-full bg-gradient-to-r from-blue-600 to-purple-600 py-4 rounded-2xl font-bold hover:scale-105 transition"
+        >
+
+            Guardar Meta
+
+        </button>
+
+    </form>
+
+</div>
+
+<script>
+
+function agregarSubmeta(){
+
+    const contenedor = document.getElementById("submetas-container");
+
+    const fila = document.createElement("div");
+
+    fila.className = "flex gap-2 mb-3";
+
+    fila.innerHTML = `
+
+        <input
+            type="text"
+            name="submetas"
+            placeholder="Escribe una submeta"
+            class="flex-1 p-3 rounded-xl text-black"
+        >
+
+        <button
+            type="button"
+            onclick="this.parentElement.remove()"
+            class="bg-red-600 px-4 rounded-xl"
+        >
+            -
+        </button>
+
+    `;
+
+    contenedor.appendChild(fila);
+
+}
+
+</script>

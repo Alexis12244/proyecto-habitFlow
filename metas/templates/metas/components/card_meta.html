@@ -1,0 +1,192 @@
+<div class="bg-slate-800 rounded-3xl p-6 shadow-lg hover:scale-[1.01] transition">
+
+    <div class="flex justify-between items-start">
+
+        <div>
+
+            <h3 class="text-2xl font-bold">
+                {{ meta.nombre }}
+            </h3>
+
+            <p class="text-slate-400 mt-2">
+                {{ meta.descripcion }}
+            </p>
+
+        </div>
+
+        {% if meta.estado == 'cumplida' %}
+
+            <span class="bg-green-500 px-3 py-1 rounded-full">
+                Cumplida
+            </span>
+
+        {% else %}
+
+            <span class="bg-yellow-500 px-3 py-1 rounded-full">
+                En progreso
+            </span>
+
+        {% endif %}
+
+    </div>
+
+    <div class="mt-6">
+
+        <div class="bg-slate-700 h-3 rounded-full overflow-hidden">
+
+            <div
+                class="bg-gradient-to-r from-cyan-400 to-purple-500 h-full rounded-full transition-all duration-700"
+                style="width: {{ meta.porcentaje }}%;"
+            ></div>
+
+        </div>
+
+        <p class="mt-2 text-right">
+
+            {{ meta.porcentaje }}%
+
+        </p>
+
+    </div>
+
+    <div class="mt-6">
+
+        <h4 class="font-bold text-lg mb-3">
+            📋 Submetas
+        </h4>
+
+        {% if meta.submetas.all %}
+
+            <div class="space-y-2">
+
+                {% for submeta in meta.submetas.all %}
+
+                    <div class="flex justify-between items-center bg-slate-700 rounded-xl px-4 py-3">
+
+                        <div class="flex items-center gap-3">
+
+                            {% if submeta.completada %}
+
+                                <span class="text-green-400 text-xl">✔</span>
+
+                            {% else %}
+
+                                <span class="text-yellow-400 text-xl">○</span>
+
+                            {% endif %}
+
+                            <div>
+
+                                <p class="{% if submeta.completada %}line-through text-slate-400{% endif %}">
+                                    {{ submeta.nombre }}
+                                </p>
+
+                                {% if submeta.descripcion %}
+                                    <small class="text-slate-400">
+                                        {{ submeta.descripcion }}
+                                    </small>
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+                        <span class="text-cyan-400">
+                            +{{ submeta.xp }} XP
+                        </span>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <p class="text-slate-400">
+                Esta meta aún no tiene submetas.
+            </p>
+
+        {% endif %}
+
+    </div>
+
+    <div class="mt-5 flex flex-wrap gap-2">
+
+        <span class="bg-blue-600 px-3 py-1 rounded-full text-sm">
+            {{ meta.submetas.count }} Submetas
+        </span>
+
+        <span class="bg-violet-600 px-3 py-1 rounded-full text-sm">
+            {{ meta.porcentaje }}%
+        </span>
+
+    </div>
+
+    <div class="mt-5 grid md:grid-cols-3 gap-4 text-sm">
+
+        <div>
+
+            <span class="text-slate-400">
+                Inicio
+            </span>
+
+            <p>{{ meta.fecha_inicio }}</p>
+
+        </div>
+
+        <div>
+
+            <span class="text-slate-400">
+                Fin
+            </span>
+
+            <p>
+
+                {% if meta.fecha_fin %}
+
+                    {{ meta.fecha_fin }}
+
+                {% else %}
+
+                    —
+
+                {% endif %}
+
+            </p>
+
+        </div>
+
+        <div>
+
+            <span class="text-slate-400">
+                Submetas
+            </span>
+
+            <p>
+
+                {{ meta.submetas.count }}
+
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="flex gap-3 mt-6">
+
+        <button class="bg-blue-600 px-5 py-2 rounded-xl">
+            <a href="#" class="bg-blue-600 px-4 py-2 rounded-xl hover:bg-blue-700 transition">
+                ✏️ Editar
+            </a>
+        </button>
+
+        <button class="bg-red-600 px-5 py-2 rounded-xl">
+            <a href="#" class="bg-red-600 px-4 py-2 rounded-xl hover:bg-red-700 transition">
+                🗑️ Eliminar
+            </a>
+        </button>
+
+    </div>
+
+</div>
