@@ -28,35 +28,60 @@ body{
 <div class="flex min-h-screen">
 
     <!-- SIDEBAR -->
-    <aside class="w-72 bg-slate-900/80 backdrop-blur-xl border-r border-slate-700 p-6">
+    <aside class="w-72 bg-slate-900/80 backdrop-blur-xl border-r border-slate-700 p-6 flex flex-col justify-between">
 
-        <h1 class="text-4xl font-black mb-8 bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">
-            🔥 HabitFlow
-        </h1>
+        <div>
+            <h1 class="text-4xl font-black mb-8 bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">
+                🔥 HabitFlow
+            </h1>
 
-        <div class="space-y-3">
-            <a href="{% url 'inicio' %}" class="block p-4 rounded-2xl hover:bg-slate-700">🏠 Inicio</a>
-            <a href="{% url 'habitos' %}" class="block p-4 rounded-2xl hover:bg-slate-700">📅 Hábitos</a>
-            <a href="{% url 'metas' %}" class="block p-4 rounded-2xl hover:bg-slate-700">🎯 Metas</a>
-            <a href="#" class="block p-4 rounded-2xl hover:bg-slate-700">🏆 Logros</a>
-            <a href="#" class="block p-4 rounded-2xl hover:bg-slate-700">📈 Estadísticas</a>
-        </div>
+            <div class="space-y-3">
+                <a href="{% url 'inicio' %}" class="block p-4 rounded-2xl hover:bg-slate-700">🏠 Inicio</a>
+                <a href="{% url 'habitos' %}" class="block p-4 rounded-2xl hover:bg-slate-700"> 🏋️‍♂️Hábitos</a>
+                <a href="{% url 'metas' %}" class="block p-4 rounded-2xl hover:bg-slate-700">🎯 Metas</a>
+                <a
+                    href="{% url 'calendario_habitos' %}"
+                    class="menu w-full text-left p-4 rounded-2xl hover:bg-slate-700 block"
+                >
+                    🗓️ Calendario
+                </a>
+                <a href="{% url 'estadisticas' %}" class="block p-4 rounded-2xl hover:bg-slate-700">📈 Estadísticas</a>
 
-        <div class="mt-10 bg-gradient-to-br from-cyan-500 to-blue-700 rounded-3xl p-5">
-            <p class="text-sm opacity-80">Nivel Actual</p>
-            <h2 class="text-5xl font-black">12</h2>
-
-            <div class="mt-4 h-3 bg-white/20 rounded-full">
-                <div class="h-3 w-3/4 bg-white rounded-full"></div>
             </div>
-
-            <p class="mt-2 text-sm">750 / 1000 XP</p>
         </div>
 
-        <a href="{% url 'logout' %}"
-           class="block mt-8 bg-red-500 hover:bg-red-600 text-center p-3 rounded-xl font-bold">
-            Cerrar sesión
-        </a>
+        <div>
+            <!-- TARJETA DE PERFIL DINÁMICA -->
+            <!-- base.html (en el Sidebar) -->
+            {% if user.is_authenticated and user.perfil %}
+                <div class="bg-gradient-to-br from-cyan-500 to-blue-700 rounded-3xl p-5 shadow-lg">
+                    <p class="text-xs font-semibold uppercase tracking-wider text-cyan-100">
+                        {{ user.username }}
+                    </p>
+                    <p class="text-sm opacity-80 mt-1">Nivel Actual</p>
+                    
+                    <!-- Agregamos ID al nivel -->
+                    <h2 id="sidebar-nivel" class="text-5xl font-black">{{ user.perfil.nivel }}</h2>
+
+                    <!-- BARRA DE PROGRESO -->
+                    <div class="mt-4 h-3 bg-black/20 rounded-full overflow-hidden">
+                        <!-- Agregamos ID a la barra -->
+                        <div id="sidebar-barra" class="h-full bg-white rounded-full transition-all duration-500"
+                            style="width: {{ user.perfil.porcentaje_nivel }}%;"></div>
+                    </div>
+
+                    <!-- Agregamos ID a la XP -->
+                    <p id="sidebar-xp" class="mt-2 text-sm font-medium">
+                        {{ user.perfil.xp_nivel_actual }} / 100 XP
+                    </p>
+                </div>
+            {% endif %}
+
+            <a href="{% url 'logout' %}"
+               class="block mt-6 bg-red-500 hover:bg-red-600 text-center p-3 rounded-xl font-bold transition">
+                Cerrar sesión
+            </a>
+        </div>
 
     </aside>
 
@@ -69,4 +94,3 @@ body{
 </div>
 </body>
 </html>
-

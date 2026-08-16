@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>HabitFlow - Login</title>
 
 <style>
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 *{
@@ -23,7 +26,7 @@ body{
 
 .left{
     flex:1;
-    background: linear-gradient(135deg,#2563eb,#7c3aed);
+    background:linear-gradient(135deg,#2563eb,#7c3aed);
     color:white;
     padding:60px;
     display:flex;
@@ -61,7 +64,7 @@ body{
     background:white;
     border-radius:18px;
     padding:30px;
-    box-shadow:0 20px 50px rgba(0, 0, 0, 0.3);
+    box-shadow:0 20px 50px rgba(0,0,0,0.3);
 }
 
 .sub{
@@ -75,6 +78,13 @@ body{
     margin:8px 0;
     border:1px solid #ddd;
     border-radius:10px;
+    outline:none;
+    transition:0.2s;
+}
+
+.input:focus{
+    border-color:#6366f1;
+    box-shadow:0 0 0 3px rgba(99,102,241,0.1);
 }
 
 button{
@@ -90,6 +100,19 @@ button{
     background:linear-gradient(135deg,#2563eb,#7c3aed);
     color:white;
     margin-top:10px;
+    transition:0.2s;
+}
+
+.btn-primary:hover{
+    transform:translateY(-1px);
+    box-shadow:0 8px 20px rgba(37,99,235,0.25);
+}
+
+.btn-primary:disabled{
+    opacity:0.5;
+    cursor:not-allowed;
+    transform:none;
+    box-shadow:none;
 }
 
 .toggle{
@@ -97,6 +120,10 @@ button{
     margin-top:15px;
     cursor:pointer;
     color:#555;
+}
+
+.toggle:hover{
+    color:#2563eb;
 }
 
 .hidden{
@@ -107,12 +134,17 @@ button{
     position:relative;
 }
 
+.password-wrapper .input{
+    padding-right:45px;
+}
+
 .eye{
     position:absolute;
     right:12px;
     top:50%;
     transform:translateY(-50%);
     cursor:pointer;
+    user-select:none;
 }
 
 .msg{
@@ -121,111 +153,773 @@ button{
     border-radius:10px;
     background:#fee2e2;
     color:#991b1b;
+    font-size:14px;
+}
+
+/* ==========================================
+   REQUISITOS DE CONTRASEÑA
+   ========================================== */
+
+.password-requirements{
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:12px;
+    padding:12px;
+    margin-top:4px;
+    margin-bottom:8px;
+}
+
+.requirements-title{
+    font-size:12px;
+    font-weight:600;
+    color:#475569;
+    margin-bottom:8px;
+}
+
+.requirement{
+    font-size:12px;
+    margin:5px 0;
+    color:#94a3b8;
+    transition:0.2s;
+}
+
+.requirement.valid{
+    color:#16a34a;
+}
+
+.requirement.invalid{
+    color:#dc2626;
+}
+
+/* ==========================================
+   BARRA DE SEGURIDAD
+   ========================================== */
+
+.password-strength{
+    height:5px;
+    width:100%;
+    background:#e2e8f0;
+    border-radius:10px;
+    overflow:hidden;
+    margin-top:8px;
+}
+
+.password-strength-bar{
+    height:100%;
+    width:0%;
+    border-radius:10px;
+    transition:all 0.3s ease;
+}
+
+.strength-text{
+    font-size:11px;
+    margin-top:5px;
+    text-align:right;
+    color:#94a3b8;
+}
+
+/* ==========================================
+   CONFIRMACIÓN
+   ========================================== */
+
+.match-message{
+    font-size:12px;
+    margin-top:2px;
+    margin-bottom:4px;
+}
+
+.match-success{
+    color:#16a34a;
+}
+
+.match-error{
+    color:#dc2626;
 }
 
 @media(max-width:900px){
+
     body{
         flex-direction:column;
+        height:auto;
+        min-height:100vh;
     }
+
+    .left{
+        padding:40px 30px;
+    }
+
+    .right{
+        padding:30px 20px;
+    }
+
 }
+
 </style>
 </head>
+
+
 <body>
 
-<div class="left">
-    <div class="logo">🔥 HabitFlow</div>
 
-    <h1>Construye hábitos que transforman tu vida.</h1>
+<!-- ==========================================
+     PANEL IZQUIERDO
+     ========================================== -->
+
+<div class="left">
+
+    <div class="logo">
+        🔥 HabitFlow
+    </div>
+
+    <h1>
+        Construye hábitos que transforman tu vida.
+    </h1>
 
     <div class="benefits">
+
         <p>⭐ Sistema de niveles</p>
+
         <p>🔥 Rachas de productividad</p>
+
         <p>🏆 Logros y recompensas</p>
+
         <p>📈 Estadísticas avanzadas</p>
+
     </div>
+
 </div>
+
+
+<!-- ==========================================
+     PANEL DERECHO
+     ========================================== -->
 
 <div class="right">
 
-    <!-- LOGIN -->
+
+    <!-- ======================================
+         LOGIN
+         ====================================== -->
+
     <div class="card" id="loginBox">
-        <h2>Bienvenido 👋</h2>
-        <p class="sub">Inicia sesión en tu cuenta</p>
+
+        <h2>
+            Bienvenido 👋
+        </h2>
+
+        <p class="sub">
+            Inicia sesión en tu cuenta
+        </p>
+
 
         {% for message in messages %}
-            <div class="msg">{{ message }}</div>
-        {% endfor %}
 
-        <form method="POST">
-            {% csrf_token %}
-            <input type="hidden" name="action" value="login">
-
-            <input class="input" name="username" placeholder="Usuario" required>
-
-            <div class="password-wrapper">
-                <input class="input" name="password" type="password" id="loginPass" placeholder="Contraseña" required>
-                <span class="eye" onclick="togglePass('loginPass')">👁</span>
+            <div class="msg">
+                {{ message }}
             </div>
 
-            <button type="submit" class="btn-primary">
+        {% endfor %}
+
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+            <input
+                type="hidden"
+                name="action"
+                value="login"
+            >
+
+
+            <input
+                class="input"
+                name="username"
+                placeholder="Usuario"
+                autocomplete="username"
+                required
+            >
+
+
+            <div class="password-wrapper">
+
+                <input
+                    class="input"
+                    name="password"
+                    type="password"
+                    id="loginPass"
+                    placeholder="Contraseña"
+                    autocomplete="current-password"
+                    required
+                >
+
+                <span
+                    class="eye"
+                    onclick="togglePass('loginPass')"
+                >
+                    👁
+                </span>
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="btn-primary"
+            >
                 Iniciar sesión
             </button>
+
         </form>
 
-        <div class="toggle" onclick="switchForm()">
+
+        <div
+            class="toggle"
+            onclick="switchForm()"
+        >
             ¿No tienes cuenta? Crear cuenta
         </div>
+
     </div>
 
-    <!-- REGISTER -->
-    <div class="card hidden" id="registerBox">
-        <h2>Crear cuenta 🚀</h2>
-        <p class="sub">Regístrate para comenzar</p>
+
+
+    <!-- ======================================
+         REGISTRO
+         ====================================== -->
+
+    <div
+        class="card hidden"
+        id="registerBox"
+    >
+
+        <h2>
+            Crear cuenta 🚀
+        </h2>
+
+        <p class="sub">
+            Regístrate para comenzar
+        </p>
+
 
         {% for message in messages %}
-            <div class="msg">{{ message }}</div>
+
+            <div class="msg">
+                {{ message }}
+            </div>
+
         {% endfor %}
 
-        <form method="POST">
+
+        <form
+            method="POST"
+            id="registerForm"
+        >
+
             {% csrf_token %}
-            <input type="hidden" name="action" value="register">
 
-            <input class="input" name="username" placeholder="Usuario" required>
+            <input
+                type="hidden"
+                name="action"
+                value="register"
+            >
+
+
+            <!-- USUARIO -->
+
+            <input
+                class="input"
+                name="username"
+                id="username"
+                placeholder="Usuario"
+                autocomplete="username"
+                required
+            >
+
+
+            <!-- CONTRASEÑA -->
 
             <div class="password-wrapper">
-                <input class="input" name="password" type="password" id="regPass" placeholder="Contraseña" required>
-                <span class="eye" onclick="togglePass('regPass')">👁</span>
+
+                <input
+                    class="input"
+                    name="password"
+                    type="password"
+                    id="regPass"
+                    placeholder="Contraseña"
+                    autocomplete="new-password"
+                    required
+                >
+
+                <span
+                    class="eye"
+                    onclick="togglePass('regPass')"
+                >
+                    👁
+                </span>
+
             </div>
+
+
+            <!-- REQUISITOS -->
+
+            <div class="password-requirements">
+
+                <div class="requirements-title">
+                    Tu contraseña debe contener:
+                </div>
+
+
+                <div
+                    class="requirement"
+                    id="reqLength"
+                >
+                    ○ Al menos 8 caracteres
+                </div>
+
+
+                <div
+                    class="requirement"
+                    id="reqUpper"
+                >
+                    ○ Una letra mayúscula
+                </div>
+
+
+                <div
+                    class="requirement"
+                    id="reqLower"
+                >
+                    ○ Una letra minúscula
+                </div>
+
+
+                <div
+                    class="requirement"
+                    id="reqNumber"
+                >
+                    ○ Un número
+                </div>
+
+
+                <div
+                    class="requirement"
+                    id="reqSpecial"
+                >
+                    ○ Un carácter especial
+                </div>
+
+
+                <!-- BARRA DE SEGURIDAD -->
+
+                <div class="password-strength">
+
+                    <div
+                        class="password-strength-bar"
+                        id="strengthBar"
+                    ></div>
+
+                </div>
+
+
+                <div
+                    class="strength-text"
+                    id="strengthText"
+                >
+                    Sin contraseña
+                </div>
+
+            </div>
+
+
+            <!-- CONFIRMAR CONTRASEÑA -->
 
             <div class="password-wrapper">
-                <input class="input" name="confirm_password" type="password" id="regPass2" placeholder="Confirmar contraseña" required>
-                <span class="eye" onclick="togglePass('regPass2')">👁</span>
+
+                <input
+                    class="input"
+                    name="confirm_password"
+                    type="password"
+                    id="regPass2"
+                    placeholder="Confirmar contraseña"
+                    autocomplete="new-password"
+                    required
+                >
+
+                <span
+                    class="eye"
+                    onclick="togglePass('regPass2')"
+                >
+                    👁
+                </span>
+
             </div>
 
-            <button type="submit" class="btn-primary">
+
+            <div
+                id="matchMessage"
+                class="match-message"
+            ></div>
+
+
+            <button
+                type="submit"
+                class="btn-primary"
+                id="registerButton"
+            >
                 Crear cuenta
             </button>
+
         </form>
 
-        <div class="toggle" onclick="switchForm()">
+
+        <div
+            class="toggle"
+            onclick="switchForm()"
+        >
             ¿Ya tienes cuenta? Iniciar sesión
         </div>
+
     </div>
 
 </div>
 
+
 <script>
+
+
+// ==========================================
+// CAMBIAR ENTRE LOGIN Y REGISTRO
+// ==========================================
+
 function switchForm(){
-    document.getElementById('loginBox').classList.toggle('hidden');
-    document.getElementById('registerBox').classList.toggle('hidden');
+
+    document
+        .getElementById('loginBox')
+        .classList
+        .toggle('hidden');
+
+    document
+        .getElementById('registerBox')
+        .classList
+        .toggle('hidden');
+
 }
 
+
+// ==========================================
+// MOSTRAR / OCULTAR CONTRASEÑA
+// ==========================================
+
 function togglePass(id){
+
     const input = document.getElementById(id);
-    input.type = input.type === "password" ? "text" : "password";
+
+    if(input.type === "password"){
+
+        input.type = "text";
+
+    }else{
+
+        input.type = "password";
+
+    }
+
 }
+
+
+// ==========================================
+// ELEMENTOS
+// ==========================================
+
+const passwordInput =
+    document.getElementById('regPass');
+
+const confirmInput =
+    document.getElementById('regPass2');
+
+const registerButton =
+    document.getElementById('registerButton');
+
+const strengthBar =
+    document.getElementById('strengthBar');
+
+const strengthText =
+    document.getElementById('strengthText');
+
+const matchMessage =
+    document.getElementById('matchMessage');
+
+
+// ==========================================
+// REQUISITOS
+// ==========================================
+
+const reqLength =
+    document.getElementById('reqLength');
+
+const reqUpper =
+    document.getElementById('reqUpper');
+
+const reqLower =
+    document.getElementById('reqLower');
+
+const reqNumber =
+    document.getElementById('reqNumber');
+
+const reqSpecial =
+    document.getElementById('reqSpecial');
+
+
+// ==========================================
+// ACTUALIZAR REQUISITO
+// ==========================================
+
+function updateRequirement(element, valid){
+
+    if(valid){
+
+        element.classList.add('valid');
+        element.classList.remove('invalid');
+
+        element.textContent =
+            '✓ ' + element.textContent.substring(2);
+
+    }else{
+
+        element.classList.remove('valid');
+        element.classList.add('invalid');
+
+        element.textContent =
+            '✗ ' + element.textContent.substring(2);
+
+    }
+
+}
+
+
+// ==========================================
+// COMPROBAR CONTRASEÑA
+// ==========================================
+
+function checkPassword(){
+
+    const password =
+        passwordInput.value;
+
+
+    const hasLength =
+        password.length >= 8;
+
+    const hasUpper =
+        /[A-Z]/.test(password);
+
+    const hasLower =
+        /[a-z]/.test(password);
+
+    const hasNumber =
+        /[0-9]/.test(password);
+
+    const hasSpecial =
+        /[!@#$%^&*(),.?":{}|<>_\-+=\[\]\\\/]/.test(password);
+
+
+    updateRequirement(
+        reqLength,
+        hasLength
+    );
+
+    updateRequirement(
+        reqUpper,
+        hasUpper
+    );
+
+    updateRequirement(
+        reqLower,
+        hasLower
+    );
+
+    updateRequirement(
+        reqNumber,
+        hasNumber
+    );
+
+    updateRequirement(
+        reqSpecial,
+        hasSpecial
+    );
+
+
+    // ======================================
+    // NIVEL DE SEGURIDAD
+    // ======================================
+
+    let score = 0;
+
+    if(hasLength) score++;
+
+    if(hasUpper) score++;
+
+    if(hasLower) score++;
+
+    if(hasNumber) score++;
+
+    if(hasSpecial) score++;
+
+
+    if(password.length === 0){
+
+        strengthBar.style.width = '0%';
+
+        strengthText.textContent =
+            'Sin contraseña';
+
+    }
+
+    else if(score <= 2){
+
+        strengthBar.style.width = '30%';
+
+        strengthText.textContent =
+            'Contraseña débil';
+
+    }
+
+    else if(score === 3 || score === 4){
+
+        strengthBar.style.width = '65%';
+
+        strengthText.textContent =
+            'Contraseña media';
+
+    }
+
+    else{
+
+        strengthBar.style.width = '100%';
+
+        strengthText.textContent =
+            'Contraseña fuerte';
+
+    }
+
+
+    checkPasswordMatch();
+
+}
+
+
+// ==========================================
+// COMPROBAR CONFIRMACIÓN
+// ==========================================
+
+function checkPasswordMatch(){
+
+    const password =
+        passwordInput.value;
+
+    const confirmation =
+        confirmInput.value;
+
+
+    if(confirmation.length === 0){
+
+        matchMessage.textContent = '';
+
+        return;
+
+    }
+
+
+    if(password === confirmation){
+
+        matchMessage.textContent =
+            '✓ Las contraseñas coinciden';
+
+        matchMessage.className =
+            'match-message match-success';
+
+    }else{
+
+        matchMessage.textContent =
+            '✗ Las contraseñas no coinciden';
+
+        matchMessage.className =
+            'match-message match-error';
+
+    }
+
+}
+
+
+// ==========================================
+// VALIDAR FORMULARIO
+// ==========================================
+
+function validateRegisterForm(){
+
+    const password =
+        passwordInput.value;
+
+    const confirmation =
+        confirmInput.value;
+
+
+    const validPassword =
+        password.length >= 8 &&
+        /[A-Z]/.test(password) &&
+        /[a-z]/.test(password) &&
+        /[0-9]/.test(password) &&
+        /[!@#$%^&*(),.?":{}|<>_\-+=\[\]\\\/]/.test(password);
+
+
+    const passwordsMatch =
+        password === confirmation &&
+        confirmation.length > 0;
+
+
+    registerButton.disabled =
+        !(validPassword && passwordsMatch);
+
+}
+
+
+// ==========================================
+// EVENTOS
+// ==========================================
+
+passwordInput.addEventListener(
+    'input',
+    function(){
+
+        checkPassword();
+
+        validateRegisterForm();
+
+    }
+);
+
+
+confirmInput.addEventListener(
+    'input',
+    function(){
+
+        checkPasswordMatch();
+
+        validateRegisterForm();
+
+    }
+);
+
+
+// ==========================================
+// ESTADO INICIAL
+// ==========================================
+
+registerButton.disabled = true;
+
+
 </script>
 
 </body>
 </html>
-

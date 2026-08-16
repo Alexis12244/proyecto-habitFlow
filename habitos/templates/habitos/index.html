@@ -1,102 +1,250 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<h1 class="text-4xl font-bold mb-6">Mis Hábitos</h1>
+<!-- ENCABEZADO -->
+<div class="mb-8">
+    <h1 class="text-3xl font-bold">Mis Hábitos</h1>
+    <p class="text-slate-400 text-sm mt-1">Construye hábitos pequeños, cosecha grandes resultados. 💪</p>
+</div>
 
-<form method="POST" class="bg-slate-800 p-6 rounded-2xl mb-8">
-    {% csrf_token %}
+<!-- CONTENEDOR PRINCIPAL: Dos columnas (Lista a la izquierda, Formulario a la derecha) -->
+<div class="flex flex-col-reverse xl:flex-row gap-8">
 
-    <input
-        type="text"
-        name="nombre"
-        placeholder="Nombre del hábito"
-        class="w-full p-3 rounded text-black mb-4"
-        required
-    >
+    <!-- COLUMNA IZQUIERDA: LISTA DE HÁBITOS -->
+    <div class="flex-1 space-y-3">
 
-    <!-- Categorías -->
-    <select
-        id="categoria_select"
-        name="categoria_select"
-        class="w-full p-3 rounded text-black mb-4"
-        onchange="toggleCustomCategory()"
-        required
-    >
-        <option value="" disabled selected>Selecciona una categoría</option>
-        <option value="Salud">💧 Salud</option>
-        <option value="Fitness">🏋 Fitness</option>
-        <option value="Estudio">📚 Estudio</option>
-        <option value="Productividad">💼 Productividad</option>
-        <option value="Finanzas">💰 Finanzas</option>
-        <option value="Mindfulness">🧘 Mindfulness</option>
-        <option value="Lectura">📖 Lectura</option>
-        <option value="custom">✍ Personalizada</option>
-    </select>
+        <!-- Pestañas simuladas -->
+        <div class="flex gap-6 border-b border-slate-700 pb-3 mb-4 text-sm font-medium">
 
-    <input
-        id="custom_category"
-        type="text"
-        name="custom_category"
-        placeholder="Escribe tu categoría"
-        class="w-full p-3 rounded text-black mb-4 hidden"
-        disabled
-    >
+            <!-- ACTIVOS -->
+            <a href="{% url 'habitos' %}?filtro=activos"
+            class="{% if filtro == 'activos' %}text-blue-500 border-b-2 border-blue-500{% else %}text-slate-400 hover:text-slate-300{% endif %} pb-3 -mb-3">
+                Activos
+            </a>
 
-    <!-- Frecuencia -->
-    <select
-        name="frecuencia"
-        class="w-full p-3 rounded text-black mb-4"
-    >
-        <option value="diario">Diario</option>
-        <option value="semanal">Semanal</option>
-        <option value="mensual">Mensual</option>
-    </select>
+            <!-- COMPLETADOS -->
+            <a href="{% url 'habitos' %}?filtro=completados"
+            class="{% if filtro == 'completados' %}text-blue-500 border-b-2 border-blue-500{% else %}text-slate-400 hover:text-slate-300{% endif %} pb-3 -mb-3">
+                Completados
+            </a>
 
-    <!-- DÍAS -->
-    <p class="mb-2 font-bold">Días:</p>
+            <!-- TODOS -->
+            <a href="{% url 'habitos' %}?filtro=todos"
+            class="{% if filtro == 'todos' %}text-blue-500 border-b-2 border-blue-500{% else %}text-slate-400 hover:text-slate-300{% endif %} pb-3 -mb-3">
+                Todos
+            </a>
 
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-        <label><input type="checkbox" name="dias" value="Lunes"> Lunes</label>
-        <label><input type="checkbox" name="dias" value="Martes"> Martes</label>
-        <label><input type="checkbox" name="dias" value="Miércoles"> Miércoles</label>
-        <label><input type="checkbox" name="dias" value="Jueves"> Jueves</label>
-        <label><input type="checkbox" name="dias" value="Viernes"> Viernes</label>
-        <label><input type="checkbox" name="dias" value="Sábado"> Sábado</label>
-        <label><input type="checkbox" name="dias" value="Domingo"> Domingo</label>
+        </div>
+
+        {% for habito in habitos %}
+            <!-- FILA DEL HÁBITO -->
+            <div class="bg-slate-800 rounded-2xl p-4 flex flex-col md:flex-row items-start md:items-center justify-between shadow-sm border border-slate-700 gap-4 transition hover:bg-slate-750">
+                
+                <!-- Icono, Nombre, Descripción y Categoría -->
+                <div class="flex items-start gap-4 flex-1">
+                    <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-xl shrink-0 mt-1 {% if habito.tipo == 'positivo' %}bg-blue-500/20 text-blue-400{% else %}bg-red-500/20 text-red-400{% endif %}">
+                        {% if habito.categoria == 'Salud' %} 💧
+                        {% elif habito.categoria == 'Fitness' %} 🏋
+                        {% elif habito.categoria == 'Estudio' %} 📚
+                        {% elif habito.categoria == 'Productividad' %} 💼
+                        {% elif habito.categoria == 'Finanzas' %} 💰
+                        {% elif habito.categoria == 'Mindfulness' %} 🧘
+                        {% elif habito.categoria == 'Lectura' %} 📖
+                        {% else %} 📌
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Textos del hábito -->
+                    <div class="flex-1">
+                        <h3 class="font-bold text-base text-white">{{ habito.nombre }}</h3>
+                        
+                        <!-- NUEVO: Descripción del hábito -->
+                        {% if habito.descripcion %}
+                            <p class="text-sm text-slate-400 mt-1 leading-snug">{{ habito.descripcion }}</p>
+                        {% endif %}
+                        
+                        <div class="flex items-center gap-2 mt-2">
+                            <span class="w-2 h-2 rounded-full {% if habito.tipo == 'positivo' %}bg-green-400{% else %}bg-red-400{% endif %}"></span>
+                            <span class="text-xs text-slate-400">{{ habito.categoria }}</span>
+                            <!-- Si deseas mostrar explícitamente el texto del tipo de hábito, descomenta la siguiente línea -->
+                            <!-- <span class="text-xs text-slate-500">| {% if habito.tipo == 'positivo' %}Positivo{% else %}Negativo{% endif %}</span> -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bloque Derecho de la fila (Días, XP, Acciones) -->
+                <div class="flex items-center gap-4 w-full md:w-auto justify-between md:justify-end">
+                    
+                    <!-- Días (Burbujas) -->
+                    <div class="hidden md:flex justify-center">
+                        <div class="flex gap-1.5">
+                            <div class="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold {% if 'Lunes' in habito.dias %}bg-blue-600 text-white{% else %}bg-slate-700 text-slate-500{% endif %}">L</div>
+                            <div class="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold {% if 'Martes' in habito.dias %}bg-blue-600 text-white{% else %}bg-slate-700 text-slate-500{% endif %}">M</div>
+                            <div class="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold {% if 'Miércoles' in habito.dias or 'Miercoles' in habito.dias %}bg-blue-600 text-white{% else %}bg-slate-700 text-slate-500{% endif %}">M</div>
+                            <div class="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold {% if 'Jueves' in habito.dias %}bg-blue-600 text-white{% else %}bg-slate-700 text-slate-500{% endif %}">J</div>
+                            <div class="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold {% if 'Viernes' in habito.dias %}bg-blue-600 text-white{% else %}bg-slate-700 text-slate-500{% endif %}">V</div>
+                            <div class="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold {% if 'Sábado' in habito.dias or 'Sabado' in habito.dias %}bg-blue-600 text-white{% else %}bg-slate-700 text-slate-500{% endif %}">S</div>
+                            <div class="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold {% if 'Domingo' in habito.dias %}bg-blue-600 text-white{% else %}bg-slate-700 text-slate-500{% endif %}">D</div>
+                        </div>
+                    </div>
+
+                    <!-- XP -->
+                    <div class="text-center w-[50px]">
+                        <span class="text-[10px] text-slate-500 block mb-0.5">XP</span>
+                        <span class="text-sm font-bold text-purple-400">+{{ habito.xp }}</span>
+                    </div>
+
+                    <!-- Acciones (Toggle, Editar, Eliminar) -->
+                    <div class="flex items-center gap-3 shrink-0 border-l border-slate-700 pl-4">
+                        
+                        <!-- Toggle Switch para Completar -->
+                        {% if habito.es_hoy %}
+                            {% if habito.completado_hoy %}
+                                <a href="{% url 'completar_habito' habito.id %}" title="Desmarcar" class="w-10 h-5 bg-green-500 rounded-full flex items-center p-1 cursor-pointer transition justify-end">
+                                    <div class="w-3.5 h-3.5 bg-white rounded-full shadow-md"></div>
+                                </a>
+                            {% else %}
+                                <a href="{% url 'completar_habito' habito.id %}" title="Completar" class="w-10 h-5 bg-slate-600 rounded-full flex items-center p-1 cursor-pointer transition justify-start">
+                                    <div class="w-3.5 h-3.5 bg-white rounded-full shadow-md"></div>
+                                </a>
+                            {% endif %}
+                        {% else %}
+                            <div title="Este hábito no corresponde a hoy" class="w-10 h-5 bg-slate-700 rounded-full flex items-center p-1 opacity-40 cursor-not-allowed justify-start">
+                                <div class="w-3.5 h-3.5 bg-slate-500 rounded-full"></div>
+                            </div>
+                        {% endif %}
+
+                        <!-- Botones de Editar y Eliminar -->
+                        <div class="flex gap-1.5">
+                            <a href="{% url 'editar_habito' habito.id %}" class="w-7 h-7 rounded-lg border border-slate-600 text-slate-400 flex items-center justify-center hover:bg-slate-700 transition text-sm">
+                                ✏️
+                            </a>
+                            <a href="{% url 'eliminar_habito' habito.id %}" 
+                            onclick="return confirm('¿Estás seguro de que deseas eliminar este hábito? Esta acción no se puede deshacer.');"
+                            class="w-7 h-7 rounded-lg border border-red-500/30 text-red-400 flex items-center justify-center hover:bg-red-500/20 transition text-sm">
+                                🗑️
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        {% empty %}
+            <!-- ESTADO VACÍO -->
+            <div class="bg-slate-800 rounded-3xl p-10 text-center border border-slate-700 border-dashed mt-8">
+                <p class="text-5xl mb-4">📅</p>
+                <p class="text-xl font-bold">No tienes hábitos todavía.</p>
+                <p class="text-slate-400 mt-2">Crea tu primer hábito en el panel derecho para comenzar.</p>
+            </div>
+        {% endfor %}
+
     </div>
 
-    <button class="bg-blue-500 px-4 py-3 rounded">
-        Crear hábito
-    </button>
-</form>
+    <!-- COLUMNA DERECHA: FORMULARIO PANEL LATERAL (Sin Cambios) -->
+    <div class="w-full xl:w-[380px] shrink-0">
+        <form method="POST" class="bg-slate-800 p-6 rounded-3xl border border-slate-700 sticky top-6">
+            {% csrf_token %}
 
-<div class="space-y-4">
-    {% for habito in habitos %}
-        <div class="bg-slate-800 p-5 rounded-2xl">
-            <h2 class="text-2xl font-bold">
-                {{ habito.nombre }}
-            </h2>
-
-            <p>Categoría: {{ habito.categoria }}</p>
-            <p>Frecuencia: {{ habito.frecuencia }}</p>
-            <p>Días: {{ habito.dias }}</p>
-            <p>XP: {{ habito.xp }}</p>
-
-            <div class="flex gap-3 mt-4">
-                <a href="{% url 'editar_habito' habito.id %}"
-                class="bg-yellow-500 px-4 py-2 rounded">
-                    Editar
-                </a>
-
-                <a href="{% url 'eliminar_habito' habito.id %}"
-                class="bg-red-500 px-4 py-2 rounded">
-                    Eliminar
-                </a>
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-lg font-bold">Nuevo hábito</h2>
+                <span class="text-slate-500 cursor-pointer">✕</span>
             </div>
-        </div>
-    {% empty %}
-        <p>No tienes hábitos todavía.</p>
-    {% endfor %}
+
+            <!-- Nombre -->
+            <div class="mb-4">
+                <label class="block text-xs text-slate-400 mb-1">Nombre del hábito</label>
+                <input type="text" name="nombre" placeholder="Ej. Leer 20 páginas" class="w-full p-3 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm focus:outline-none focus:border-blue-500 transition" required>
+            </div>
+
+            <!-- Descripción -->
+            <div class="mb-4">
+                <label class="block text-xs text-slate-400 mb-1">Descripción (opcional)</label>
+                <textarea name="descripcion" placeholder="Una breve descripción..." class="w-full p-3 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm focus:outline-none focus:border-blue-500 transition" rows="2"></textarea>
+            </div>
+
+            <!-- Grid 2 Columnas: Categoría y Tipo -->
+            <div class="grid grid-cols-2 gap-3 mb-4">
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Categoría</label>
+                    <select id="categoria_select" name="categoria_select" class="w-full p-3 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm focus:outline-none focus:border-blue-500" onchange="toggleCustomCategory()" required>
+                        <option value="" disabled selected>Seleccionar</option>
+                        <option value="Salud">💧 Salud</option>
+                        <option value="Fitness">🏋 Fitness</option>
+                        <option value="Estudio">📚 Estudio</option>
+                        <option value="Productividad">💼 Productividad</option>
+                        <option value="Finanzas">💰 Finanzas</option>
+                        <option value="Mindfulness">🧘 Mindfulness</option>
+                        <option value="Lectura">📖 Lectura</option>
+                        <option value="custom">✍ Personalizada</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Tipo de hábito</label>
+                    <select name="tipo" class="w-full p-3 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm focus:outline-none focus:border-blue-500" required>
+                        <option value="positivo" selected>✅ Positivo</option>
+                        <option value="negativo">🚫 Negativo</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Categoría personalizada oculta -->
+            <input id="custom_category" type="text" name="custom_category" placeholder="Escribe tu categoría" class="w-full p-3 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm mb-4 hidden focus:outline-none focus:border-blue-500" disabled>
+
+            <!-- Días de la semana -->
+            <div class="mb-5">
+                <label class="block text-xs text-slate-400 mb-2">Días de la semana</label>
+                <div class="flex justify-between gap-1">
+                    <label class="cursor-pointer">
+                        <input type="checkbox" name="dias" value="Lunes" class="peer sr-only">
+                        <div class="w-9 h-9 flex items-center justify-center rounded-full bg-slate-700 text-slate-400 text-sm font-bold peer-checked:bg-blue-600 peer-checked:text-white transition">L</div>
+                    </label>
+                    <label class="cursor-pointer">
+                        <input type="checkbox" name="dias" value="Martes" class="peer sr-only">
+                        <div class="w-9 h-9 flex items-center justify-center rounded-full bg-slate-700 text-slate-400 text-sm font-bold peer-checked:bg-blue-600 peer-checked:text-white transition">M</div>
+                    </label>
+                    <label class="cursor-pointer">
+                        <input type="checkbox" name="dias" value="Miércoles" class="peer sr-only">
+                        <div class="w-9 h-9 flex items-center justify-center rounded-full bg-slate-700 text-slate-400 text-sm font-bold peer-checked:bg-blue-600 peer-checked:text-white transition">M</div>
+                    </label>
+                    <label class="cursor-pointer">
+                        <input type="checkbox" name="dias" value="Jueves" class="peer sr-only">
+                        <div class="w-9 h-9 flex items-center justify-center rounded-full bg-slate-700 text-slate-400 text-sm font-bold peer-checked:bg-blue-600 peer-checked:text-white transition">J</div>
+                    </label>
+                    <label class="cursor-pointer">
+                        <input type="checkbox" name="dias" value="Viernes" class="peer sr-only">
+                        <div class="w-9 h-9 flex items-center justify-center rounded-full bg-slate-700 text-slate-400 text-sm font-bold peer-checked:bg-blue-600 peer-checked:text-white transition">V</div>
+                    </label>
+                    <label class="cursor-pointer">
+                        <input type="checkbox" name="dias" value="Sábado" class="peer sr-only">
+                        <div class="w-9 h-9 flex items-center justify-center rounded-full bg-slate-700 text-slate-400 text-sm font-bold peer-checked:bg-blue-600 peer-checked:text-white transition">S</div>
+                    </label>
+                    <label class="cursor-pointer">
+                        <input type="checkbox" name="dias" value="Domingo" class="peer sr-only">
+                        <div class="w-9 h-9 flex items-center justify-center rounded-full bg-slate-700 text-slate-400 text-sm font-bold peer-checked:bg-blue-600 peer-checked:text-white transition">D</div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- XP -->
+            <div class="mb-6">
+                <label class="block text-xs text-slate-400 mb-1">⭐ XP por completar</label>
+                <input type="number" name="xp" value="10" min="1" max="100" class="w-full p-3 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm focus:outline-none focus:border-blue-500">
+            </div>
+
+            <!-- Botones -->
+            <div class="flex gap-3 mt-4">
+                <button type="reset" class="flex-1 py-3 rounded-xl text-sm font-bold border border-slate-600 text-slate-300 hover:bg-slate-700 transition">
+                    Cancelar
+                </button>
+                <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-700 py-3 rounded-xl text-sm font-bold text-white transition shadow-lg shadow-blue-500/30">
+                    Guardar hábito
+                </button>
+            </div>
+
+        </form>
+    </div>
 </div>
 
 <script>

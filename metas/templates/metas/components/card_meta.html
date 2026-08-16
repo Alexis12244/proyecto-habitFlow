@@ -1,9 +1,15 @@
-<div class="bg-slate-800 rounded-3xl p-6 shadow-lg hover:scale-[1.01] transition">
+<div
+    class="bg-slate-800 rounded-3xl p-6 shadow-lg transition"
+    data-meta="{{ meta.id }}"
+>
 
-    <div class="flex justify-between items-start">
+    <!-- ENCABEZADO (Clickeable para abrir/cerrar) -->
+    <div 
+        class="flex justify-between items-start cursor-pointer hover:bg-slate-700/50 p-2 -m-2 rounded-xl transition"
+        onclick="toggleMeta(this)"
+    >
 
         <div>
-
             <h3 class="text-2xl font-bold">
                 {{ meta.nombre }}
             </h3>
@@ -11,182 +17,279 @@
             <p class="text-slate-400 mt-2">
                 {{ meta.descripcion }}
             </p>
-
         </div>
 
-        {% if meta.estado == 'cumplida' %}
-
-            <span class="bg-green-500 px-3 py-1 rounded-full">
-                Cumplida
+        <!-- PORCENTAJE, ESTADO Y FLECHA -->
+        <div class="flex items-center gap-3 shrink-0">
+            
+            <!-- NUEVO: PORCENTAJE VISIBLE SIEMPRE -->
+            <span class="header-porcentaje bg-violet-600 px-3 py-1 rounded-full text-sm font-medium">
+                {{ meta.porcentaje }}%
             </span>
 
-        {% else %}
-
-            <span class="bg-yellow-500 px-3 py-1 rounded-full">
-                En progreso
+            <!-- ESTADO -->
+            <span
+                class="estado-meta px-3 py-1 rounded-full text-sm font-medium
+                {% if meta.estado == 'cumplida' %}
+                    bg-green-500
+                {% else %}
+                    bg-yellow-500
+                {% endif %}"
+            >
+                {% if meta.estado == 'cumplida' %}
+                    Cumplida
+                {% else %}
+                    En progreso
+                {% endif %}
             </span>
 
-        {% endif %}
+            <!-- ICONO DE FLECHA -->
+            <span class="icono-toggle text-slate-400 transform transition-transform duration-300 text-xl">
+                🔽
+            </span>
+        </div>
 
     </div>
 
-    <div class="mt-6">
 
-        <div class="bg-slate-700 h-3 rounded-full overflow-hidden">
+    <!-- CONTENIDO COLAPSABLE (Oculto por defecto) -->
+    <div class="contenido-meta hidden mt-6 border-t border-slate-700 pt-6">
 
-            <div
-                class="bg-gradient-to-r from-cyan-400 to-purple-500 h-full rounded-full transition-all duration-700"
-                style="width: {{ meta.porcentaje }}%;"
-            ></div>
-
+        <!-- BARRA DE PROGRESO -->
+        <div>
+            <div class="bg-slate-700 h-3 rounded-full overflow-hidden">
+                <div
+                    class="barra-progreso bg-gradient-to-r from-cyan-400 to-purple-500 h-full rounded-full transition-all duration-700"
+                    style="width: {{ meta.porcentaje }}%;"
+                ></div>
+            </div>
+            <p class="porcentaje mt-2 text-right">
+                {{ meta.porcentaje }}%
+            </p>
         </div>
 
-        <p class="mt-2 text-right">
 
-            {{ meta.porcentaje }}%
+        <!-- SUBMETAS -->
+        <div class="mt-6">
+            <h4 class="font-bold text-lg mb-3">
+                📋 Submetas
+            </h4>
 
-        </p>
+            {% if meta.submetas.all %}
+                <div class="space-y-2">
+                    {% for submeta in meta.submetas.all %}
+                        <button
+                            type="button"
+                            class="submeta-btn w-full flex justify-between items-center bg-slate-700 rounded-xl px-4 py-3 hover:bg-slate-600 transition text-left"
+                            data-url="{% url 'completar_submeta' submeta.id %}"
+                        >
+                            <div class="flex items-center gap-3">
+                                <!-- CHECK -->
+                                <span class="check-icon text-2xl">
+                                    {% if submeta.completada %}
+                                        ✅
+                                    {% else %}
+                                        ⬜
+                                    {% endif %}
+                                </span>
 
-    </div>
+                                <!-- NOMBRE -->
+                                <div>
+                                    <p
+                                        class="nombre-submeta
+                                        {% if submeta.completada %}
+                                            line-through text-slate-400
+                                        {% endif %}"
+                                    >
+                                        {{ submeta.nombre }}
+                                    </p>
 
-    <div class="mt-6">
-
-        <h4 class="font-bold text-lg mb-3">
-            📋 Submetas
-        </h4>
-
-        {% if meta.submetas.all %}
-
-            <div class="space-y-2">
-
-                {% for submeta in meta.submetas.all %}
-
-                    <div class="flex justify-between items-center bg-slate-700 rounded-xl px-4 py-3">
-
-                        <div class="flex items-center gap-3">
-
-                            {% if submeta.completada %}
-
-                                <span class="text-green-400 text-xl">✔</span>
-
-                            {% else %}
-
-                                <span class="text-yellow-400 text-xl">○</span>
-
-                            {% endif %}
-
-                            <div>
-
-                                <p class="{% if submeta.completada %}line-through text-slate-400{% endif %}">
-                                    {{ submeta.nombre }}
-                                </p>
-
-                                {% if submeta.descripcion %}
-                                    <small class="text-slate-400">
-                                        {{ submeta.descripcion }}
-                                    </small>
-                                {% endif %}
-
+                                    {% if submeta.descripcion %}
+                                        <small class="text-slate-400">
+                                            {{ submeta.descripcion }}
+                                        </small>
+                                    {% endif %}
+                                </div>
                             </div>
 
-                        </div>
+                            <!-- XP -->
+                            <span class="text-cyan-400">
+                                +{{ submeta.xp }} XP
+                            </span>
+                        </button>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-slate-400">
+                    Esta meta aún no tiene submetas.
+                </p>
+            {% endif %}
+        </div>
 
-                        <span class="text-cyan-400">
-                            +{{ submeta.xp }} XP
-                        </span>
 
-                    </div>
+        <!-- ETIQUETAS -->
+        <div class="mt-5 flex flex-wrap gap-2">
+            <span class="bg-blue-600 px-3 py-1 rounded-full text-sm">
+                {{ meta.submetas.count }} Submetas
+            </span>
+            <span class="etiqueta-porcentaje bg-violet-600 px-3 py-1 rounded-full text-sm">
+                {{ meta.porcentaje }}%
+            </span>
+        </div>
 
-                {% endfor %}
 
+        <!-- FECHAS -->
+        <div class="mt-5 grid md:grid-cols-3 gap-4 text-sm">
+            <div>
+                <span class="text-slate-400">Inicio</span>
+                <p>{{ meta.fecha_inicio }}</p>
             </div>
-
-        {% else %}
-
-            <p class="text-slate-400">
-                Esta meta aún no tiene submetas.
-            </p>
-
-        {% endif %}
-
-    </div>
-
-    <div class="mt-5 flex flex-wrap gap-2">
-
-        <span class="bg-blue-600 px-3 py-1 rounded-full text-sm">
-            {{ meta.submetas.count }} Submetas
-        </span>
-
-        <span class="bg-violet-600 px-3 py-1 rounded-full text-sm">
-            {{ meta.porcentaje }}%
-        </span>
-
-    </div>
-
-    <div class="mt-5 grid md:grid-cols-3 gap-4 text-sm">
-
-        <div>
-
-            <span class="text-slate-400">
-                Inicio
-            </span>
-
-            <p>{{ meta.fecha_inicio }}</p>
-
+            <div>
+                <span class="text-slate-400">Fin</span>
+                <p class="fecha-fin">
+                    {% if meta.fecha_fin %}
+                        {{ meta.fecha_fin }}
+                    {% else %}
+                        —
+                    {% endif %}
+                </p>
+            </div>
+            <div>
+                <span class="text-slate-400">Submetas</span>
+                <p>{{ meta.submetas.count }}</p>
+            </div>
         </div>
 
-        <div>
 
-            <span class="text-slate-400">
-                Fin
-            </span>
-
-            <p>
-
-                {% if meta.fecha_fin %}
-
-                    {{ meta.fecha_fin }}
-
-                {% else %}
-
-                    —
-
-                {% endif %}
-
-            </p>
-
-        </div>
-
-        <div>
-
-            <span class="text-slate-400">
-                Submetas
-            </span>
-
-            <p>
-
-                {{ meta.submetas.count }}
-
-            </p>
-
-        </div>
-
-    </div>
-
-    <div class="flex gap-3 mt-6">
-
-        <button class="bg-blue-600 px-5 py-2 rounded-xl">
-            <a href="#" class="bg-blue-600 px-4 py-2 rounded-xl hover:bg-blue-700 transition">
+        <!-- BOTONES -->
+        <div class="flex gap-3 mt-6">
+            <a
+                href="{% url 'editar_meta' meta.id %}"
+                class="bg-blue-600 px-5 py-2 rounded-xl hover:bg-blue-700 transition"
+            >
                 ✏️ Editar
             </a>
-        </button>
-
-        <button class="bg-red-600 px-5 py-2 rounded-xl">
-            <a href="#" class="bg-red-600 px-4 py-2 rounded-xl hover:bg-red-700 transition">
+            <a
+                href="{% url 'eliminar_meta' meta.id %}"
+                class="bg-red-600 px-5 py-2 rounded-xl hover:bg-red-700 transition"
+            >
                 🗑️ Eliminar
             </a>
-        </button>
+        </div>
 
     </div>
 
 </div>
+
+
+<!-- JAVASCRIPT -->
+<script>
+function toggleMeta(element) {
+    const card = element.closest("[data-meta]");
+    const contenido = card.querySelector(".contenido-meta");
+    const icono = card.querySelector(".icono-toggle");
+
+    contenido.classList.toggle("hidden");
+
+    if (contenido.classList.contains("hidden")) {
+        icono.classList.remove("rotate-180");
+    } else {
+        icono.classList.add("rotate-180");
+    }
+}
+
+document.querySelectorAll(".submeta-btn").forEach(button => {
+    button.addEventListener("click", async function (e) {
+        e.stopPropagation();
+
+        const url = this.dataset.url;
+
+        try {
+            const response = await fetch(url, {
+                method: "GET",
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error("Error al actualizar la submeta");
+            }
+
+            const data = await response.json();
+
+            const card = this.closest("[data-meta]");
+            
+            // Elementos a actualizar
+            const barra = card.querySelector(".barra-progreso");
+            const porcentaje = card.querySelector(".porcentaje");
+            const etiquetaPorcentaje = card.querySelector(".etiqueta-porcentaje");
+            const headerPorcentaje = card.querySelector(".header-porcentaje"); // Nuevo
+            const estado = card.querySelector(".estado-meta");
+            const fechaFin = card.querySelector(".fecha-fin");
+            const icono = this.querySelector(".check-icon");
+            const nombre = this.querySelector(".nombre-submeta");
+
+            /* ACTUALIZAR CHECK */
+            if (data.completada) {
+                icono.textContent = "✅";
+                nombre.classList.add("line-through", "text-slate-400");
+            } else {
+                icono.textContent = "⬜";
+                nombre.classList.remove("line-through", "text-slate-400");
+            }
+
+            /* ACTUALIZAR PORCENTAJE */
+            barra.style.width = data.porcentaje + "%";
+            porcentaje.textContent = data.porcentaje + "%";
+            etiquetaPorcentaje.textContent = data.porcentaje + "%";
+            
+            // Actualizar el nuevo porcentaje del encabezado
+            if (headerPorcentaje) {
+                headerPorcentaje.textContent = data.porcentaje + "%";
+            }
+
+            /* ACTUALIZAR PERFIL (SIDEBAR) */
+            if (data.perfil) {
+                const elNivel = document.getElementById("sidebar-nivel");
+                const elXp = document.getElementById("sidebar-xp");
+                const elBarra = document.getElementById("sidebar-barra");
+
+                if (elNivel) elNivel.textContent = data.perfil.nivel;
+                if (elXp) elXp.textContent = `${data.perfil.xp_actual} / 100 XP`;
+                if (elBarra) elBarra.style.width = data.perfil.porcentaje + "%";
+            }
+
+            /* ACTUALIZAR ESTADÍSTICAS */
+            if (data.estadisticas) {
+                const elCompletadas = document.getElementById("stat-completadas");
+                const elProgresoGeneral = document.getElementById("stat-progreso-general");
+
+                if (elCompletadas) {
+                    elCompletadas.textContent = data.estadisticas.completadas;
+                }
+                if (elProgresoGeneral) {
+                    elProgresoGeneral.textContent = `${data.estadisticas.progreso_general}%`;
+                }
+            }
+
+            /* ACTUALIZAR ESTADO */
+            if (data.estado === "cumplida") {
+                estado.textContent = "Cumplida";
+                estado.classList.remove("bg-yellow-500");
+                estado.classList.add("bg-green-500");
+                fechaFin.textContent = data.fecha_fin;
+            } else {
+                estado.textContent = "En progreso";
+                estado.classList.remove("bg-green-500");
+                estado.classList.add("bg-yellow-500");
+                fechaFin.textContent = "—";
+            }
+
+        } catch (error) {
+            console.error(error);
+            alert("No se pudo actualizar la submeta.");
+        }
+    });
+});
+</script>

@@ -2,80 +2,150 @@
 
 {% block content %}
 
-<h1 class="text-4xl font-bold mb-6">Editar Hábito ✏️</h1>
+<div class="max-w-2xl mx-auto mt-10">
 
-<form method="POST" class="bg-slate-800 p-6 rounded-2xl mb-8">
-    {% csrf_token %}
-
-    <input
-        type="text"
-        name="nombre"
-        value="{{ habito.nombre }}"
-        class="w-full p-3 rounded text-black mb-4"
-        required
-    >
-
-    <!-- Categorías -->
-    <select
-        id="categoria_select"
-        name="categoria_select"
-        class="w-full p-3 rounded text-black mb-4"
-        onchange="toggleCustomCategory()"
-        required
-    >
-        <option value="Salud" {% if habito.categoria == 'Salud' %}selected{% endif %}>💧 Salud</option>
-        <option value="Fitness" {% if habito.categoria == 'Fitness' %}selected{% endif %}>🏋 Fitness</option>
-        <option value="Estudio" {% if habito.categoria == 'Estudio' %}selected{% endif %}>📚 Estudio</option>
-        <option value="Productividad" {% if habito.categoria == 'Productividad' %}selected{% endif %}>💼 Productividad</option>
-        <option value="Finanzas" {% if habito.categoria == 'Finanzas' %}selected{% endif %}>💰 Finanzas</option>
-        <option value="Mindfulness" {% if habito.categoria == 'Mindfulness' %}selected{% endif %}>🧘 Meditación</option>
-        <option value="Lectura" {% if habito.categoria == 'Lectura' %}selected{% endif %}>📖 Lectura</option>
-        <option value="custom" {% if es_personalizada %}selected{% endif %}>✍ Personalizada</option>
-    </select>
-
-    <input
-        id="custom_category"
-        type="text"
-        name="custom_category"
-        placeholder="Escribe tu categoría"
-        value="{% if es_personalizada %}{{ habito.categoria }}{% endif %}"
-        class="w-full p-3 rounded text-black mb-4 {% if not es_personalizada %}hidden{% endif %}"
-        {% if es_personalizada %}required{% endif %}
-    >
-
-    <!-- Frecuencia -->
-    <select
-        name="frecuencia"
-        class="w-full p-3 rounded text-black mb-4"
-    >
-        <option value="diario" {% if habito.frecuencia == 'diario' %}selected{% endif %}>Diario</option>
-        <option value="semanal" {% if habito.frecuencia == 'semanal' %}selected{% endif %}>Semanal</option>
-        <option value="mensual" {% if habito.frecuencia == 'mensual' %}selected{% endif %}>Mensual</option>
-    </select>
-
-    <p class="mb-2 font-bold text-white">Días:</p>
-
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6 text-white">
-        <label><input type="checkbox" name="dias" value="Lunes" {% if 'Lunes' in habito.dias %}checked{% endif %}> Lunes</label>
-        <label><input type="checkbox" name="dias" value="Martes" {% if 'Martes' in habito.dias %}checked{% endif %}> Martes</label>
-        <label><input type="checkbox" name="dias" value="Miércoles" {% if 'Miércoles' in habito.dias %}checked{% endif %}> Miércoles</label>
-        <label><input type="checkbox" name="dias" value="Jueves" {% if 'Jueves' in habito.dias %}checked{% endif %}> Jueves</label>
-        <label><input type="checkbox" name="dias" value="Viernes" {% if 'Viernes' in habito.dias %}checked{% endif %}> Viernes</label>
-        <label><input type="checkbox" name="dias" value="Sábado" {% if 'Sábado' in habito.dias %}checked{% endif %}> Sábado</label>
-        <label><input type="checkbox" name="dias" value="Domingo" {% if 'Domingo' in habito.dias %}checked{% endif %}> Domingo</label>
+    <div class="mb-8 text-center">
+        <h1 class="text-3xl font-bold">Editar Hábito ✏️</h1>
+        <p class="text-slate-400 mt-2">Modifica los detalles de tu hábito para ajustarlo a tu rutina.</p>
     </div>
 
-    <div class="flex gap-4">
-        <button class="bg-green-500 px-6 py-3 rounded font-bold">
-            Guardar cambios
-        </button>
+    <form method="POST" class="bg-slate-800 p-8 rounded-3xl border border-slate-700 shadow-xl">
+        {% csrf_token %}
 
-        <a href="{% url 'habitos' %}"
-           class="bg-gray-500 px-6 py-3 rounded font-bold">
-            Cancelar
-        </a>
-    </div>
-</form>
+        <!-- Nombre -->
+        <div class="mb-5">
+            <label class="block text-sm text-slate-400 mb-2">Nombre del hábito</label>
+            <input
+                type="text"
+                name="nombre"
+                value="{{ habito.nombre }}"
+                class="w-full p-3 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm focus:outline-none focus:border-blue-500 transition"
+                required
+            >
+        </div>
+
+        <!-- Descripción -->
+        <div class="mb-5">
+            <label class="block text-sm text-slate-400 mb-2">Descripción (opcional)</label>
+            <textarea 
+                name="descripcion" 
+                class="w-full p-3 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm focus:outline-none focus:border-blue-500 transition" 
+                rows="2"
+            >{{ habito.descripcion }}</textarea>
+        </div>
+
+        <!-- Grid 2 Columnas: Categoría y Tipo -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+            
+            <!-- Categoría -->
+            <div>
+                <label class="block text-sm text-slate-400 mb-2">Categoría</label>
+                <select
+                    id="categoria_select"
+                    name="categoria_select"
+                    class="w-full p-3 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm focus:outline-none focus:border-blue-500 transition"
+                    onchange="toggleCustomCategory()"
+                    required
+                >
+                    <option value="Salud" {% if habito.categoria == 'Salud' %}selected{% endif %}>💧 Salud</option>
+                    <option value="Fitness" {% if habito.categoria == 'Fitness' %}selected{% endif %}>🏋 Fitness</option>
+                    <option value="Estudio" {% if habito.categoria == 'Estudio' %}selected{% endif %}>📚 Estudio</option>
+                    <option value="Productividad" {% if habito.categoria == 'Productividad' %}selected{% endif %}>💼 Productividad</option>
+                    <option value="Finanzas" {% if habito.categoria == 'Finanzas' %}selected{% endif %}>💰 Finanzas</option>
+                    <option value="Mindfulness" {% if habito.categoria == 'Mindfulness' %}selected{% endif %}>🧘 Mindfulness</option>
+                    <option value="Lectura" {% if habito.categoria == 'Lectura' %}selected{% endif %}>📖 Lectura</option>
+                    <option value="custom" {% if es_personalizada %}selected{% endif %}>✍ Personalizada</option>
+                </select>
+            </div>
+
+            <!-- Tipo (Positivo o Negativo) -->
+            <div>
+                <label class="block text-sm text-slate-400 mb-2">Tipo de hábito</label>
+                <select
+                    name="tipo"
+                    class="w-full p-3 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm focus:outline-none focus:border-blue-500 transition"
+                    required
+                >
+                    <option value="positivo" {% if habito.tipo == 'positivo' %}selected{% endif %}>✅ Positivo</option>
+                    <option value="negativo" {% if habito.tipo == 'negativo' %}selected{% endif %}>🚫 Negativo</option>
+                </select>
+            </div>
+
+        </div>
+
+        <!-- Categoría Personalizada (Oculta por defecto) -->
+        <input
+            id="custom_category"
+            type="text"
+            name="custom_category"
+            placeholder="Escribe tu categoría"
+            value="{% if es_personalizada %}{{ habito.categoria }}{% endif %}"
+            class="w-full p-3 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm mb-6 focus:outline-none focus:border-blue-500 transition {% if not es_personalizada %}hidden{% endif %}"
+            {% if es_personalizada %}required{% endif %}
+        >
+
+        <!-- Días de la semana -->
+        <div class="mb-6">
+            <label class="block text-sm text-slate-400 mb-3">Días de la semana</label>
+            <div class="flex justify-between md:justify-start md:gap-3">
+                <label class="cursor-pointer">
+                    <input type="checkbox" name="dias" value="Lunes" class="peer sr-only" {% if 'Lunes' in habito.dias %}checked{% endif %}>
+                    <div class="w-10 h-10 flex items-center justify-center rounded-full bg-slate-700 text-slate-400 text-sm font-bold peer-checked:bg-blue-600 peer-checked:text-white transition">L</div>
+                </label>
+                <label class="cursor-pointer">
+                    <input type="checkbox" name="dias" value="Martes" class="peer sr-only" {% if 'Martes' in habito.dias %}checked{% endif %}>
+                    <div class="w-10 h-10 flex items-center justify-center rounded-full bg-slate-700 text-slate-400 text-sm font-bold peer-checked:bg-blue-600 peer-checked:text-white transition">M</div>
+                </label>
+                <label class="cursor-pointer">
+                    <input type="checkbox" name="dias" value="Miércoles" class="peer sr-only" {% if 'Miércoles' in habito.dias or 'Miercoles' in habito.dias %}checked{% endif %}>
+                    <div class="w-10 h-10 flex items-center justify-center rounded-full bg-slate-700 text-slate-400 text-sm font-bold peer-checked:bg-blue-600 peer-checked:text-white transition">M</div>
+                </label>
+                <label class="cursor-pointer">
+                    <input type="checkbox" name="dias" value="Jueves" class="peer sr-only" {% if 'Jueves' in habito.dias %}checked{% endif %}>
+                    <div class="w-10 h-10 flex items-center justify-center rounded-full bg-slate-700 text-slate-400 text-sm font-bold peer-checked:bg-blue-600 peer-checked:text-white transition">J</div>
+                </label>
+                <label class="cursor-pointer">
+                    <input type="checkbox" name="dias" value="Viernes" class="peer sr-only" {% if 'Viernes' in habito.dias %}checked{% endif %}>
+                    <div class="w-10 h-10 flex items-center justify-center rounded-full bg-slate-700 text-slate-400 text-sm font-bold peer-checked:bg-blue-600 peer-checked:text-white transition">V</div>
+                </label>
+                <label class="cursor-pointer">
+                    <input type="checkbox" name="dias" value="Sábado" class="peer sr-only" {% if 'Sábado' in habito.dias or 'Sabado' in habito.dias %}checked{% endif %}>
+                    <div class="w-10 h-10 flex items-center justify-center rounded-full bg-slate-700 text-slate-400 text-sm font-bold peer-checked:bg-blue-600 peer-checked:text-white transition">S</div>
+                </label>
+                <label class="cursor-pointer">
+                    <input type="checkbox" name="dias" value="Domingo" class="peer sr-only" {% if 'Domingo' in habito.dias %}checked{% endif %}>
+                    <div class="w-10 h-10 flex items-center justify-center rounded-full bg-slate-700 text-slate-400 text-sm font-bold peer-checked:bg-blue-600 peer-checked:text-white transition">D</div>
+                </label>
+            </div>
+        </div>
+
+        <!-- XP -->
+        <div class="mb-8">
+            <label class="block text-sm text-slate-400 mb-2">⭐ XP por completar</label>
+            <input
+                type="number"
+                name="xp"
+                value="{{ habito.xp }}"
+                min="1"
+                max="100"
+                class="w-full p-3 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm focus:outline-none focus:border-blue-500 transition"
+                required
+            >
+        </div>
+
+        <!-- Botones -->
+        <div class="flex gap-4 border-t border-slate-700 pt-6">
+            <a href="{% url 'habitos' %}" class="flex-1 py-3 rounded-xl text-center text-sm font-bold border border-slate-600 text-slate-300 hover:bg-slate-700 transition">
+                Cancelar
+            </a>
+            
+            <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-700 py-3 rounded-xl text-sm font-bold text-white transition shadow-lg shadow-blue-500/30">
+                Guardar cambios
+            </button>
+        </div>
+    </form>
+
+</div>
 
 <script>
 function toggleCustomCategory() {
@@ -85,6 +155,7 @@ function toggleCustomCategory() {
     if (select.value === 'custom') {
         input.classList.remove('hidden');
         input.setAttribute('required', 'true');
+        input.focus();
     } else {
         input.classList.add('hidden');
         input.removeAttribute('required');
@@ -93,4 +164,3 @@ function toggleCustomCategory() {
 </script>
 
 {% endblock %}
-
